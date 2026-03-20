@@ -13,7 +13,9 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody rb;
     private InputAction jumpAction;
+    public InputAction speedAction;
     private bool isOnGround = true;
+    private int maxJumped = 2;
 
     private Animator playerAnim;
     private AudioSource playerAudio;
@@ -33,6 +35,7 @@ public class PlayerController : MonoBehaviour
         Physics.gravity *= gravityModifier;
 
         jumpAction = InputSystem.actions.FindAction("Jump");
+        speedAction = InputSystem.actions.FindAction("Sprint");
 
         gameOver = false;
     }
@@ -40,14 +43,16 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (jumpAction.triggered && isOnGround && !gameOver)
+        if (jumpAction.triggered && maxJumped !=0 && !gameOver)
         {
             rb.AddForce(jumpForce * Vector3.up, ForceMode.Impulse);
             isOnGround = false;
+            maxJumped -= 1;
             playerAnim.SetTrigger("Jump_trig");
             dirtParticle.Stop();
             playerAudio.PlayOneShot(jumpSfx);
         }
+     
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -55,6 +60,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
+            maxJumped = 2;
             dirtParticle.Play();
         }
         else if (collision.gameObject.CompareTag("Obstacle"))
