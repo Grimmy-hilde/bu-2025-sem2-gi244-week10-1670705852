@@ -39,7 +39,7 @@ public class MoveLeft : MonoBehaviour
             speed = fristSpeed * 2 ;
         }
         else
-        {
+        { 
             speed = fristSpeed;
         }
     }

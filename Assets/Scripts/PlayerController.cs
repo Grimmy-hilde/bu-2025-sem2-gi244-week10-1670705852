@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     public ParticleSystem explosionParticle;
     public ParticleSystem dirtParticle;
 
+    private int health = 3;
+
     public AudioClip jumpSfx;
     public AudioClip crashSfx;
 
@@ -32,6 +34,7 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        health = 3;
         Physics.gravity *= gravityModifier;
 
         jumpAction = InputSystem.actions.FindAction("Jump");
@@ -63,16 +66,24 @@ public class PlayerController : MonoBehaviour
             maxJumped = 2;
             dirtParticle.Play();
         }
-        else if (collision.gameObject.CompareTag("Obstacle"))
-        {
-            Debug.Log("Game Over!");
-            gameOver = true;
-            playerAnim.SetBool("Death_b", true);
-            playerAnim.SetInteger("DeathType_int", 1);
-            explosionParticle.Play();
-            dirtParticle.Stop();
+        else if (collision.gameObject.CompareTag("Obstacle") )
+        {           
+            health = health - 1;      
+            explosionParticle.Play();          
             playerAudio.PlayOneShot(crashSfx);
+
+            Debug.Log("current Hp" + health);
+            if (health == 0)
+            {
+                Debug.Log("Game Over!");
+                gameOver = true;
+                playerAnim.SetBool("Death_b", true);
+                playerAnim.SetInteger("DeathType_int", 1);                
+                dirtParticle.Stop();
+                
+            }
         }
+        
     }
 
 }
